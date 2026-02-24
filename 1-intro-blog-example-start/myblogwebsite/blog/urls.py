@@ -7,5 +7,5 @@ urlpatterns = [
     # post Detail view
     # <datatype:variable_name>
     # make sure the variable name matches the view function parameter in our views.py
-    path('post/<int:pk>/', views.post_detail, name='post_detail'),
+    path('post/<int:pk>/',views.post_detail, name ='post_detail')
 ]
