@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 # import login_required decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 
 # Create your views here.
 from .models import Announcement
 from .forms import AnnouncementForm
+
+def is_teacher(user): 
+    return user.role == "teacher"
 
 @login_required
 def announcement_list(request):
@@ -15,6 +18,10 @@ def announcement_list(request):
         {'announcements': announcements}
     )
 
+# will not be using permission required in the course, this is just an example
+@login_required
+# @user_passes_test(is_teacher, login_url='login')
+@Permission_required('announcements.add announcement', raise_exception=True)
 def create_announcement(request):
     if request.method == 'POST':
         form = AnnouncementForm(request.POST)

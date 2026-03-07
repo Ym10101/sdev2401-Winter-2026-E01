@@ -1,5 +1,7 @@
 from django import forms
 
+from .models import Company
+
 class ContactForm(forms.Form):
     name = forms.CharField(max_length=100, required=True)
     email = forms.EmailField(required=True)
@@ -20,3 +22,10 @@ class ContactForm(forms.Form):
         if len(message) < 10:
             raise forms.ValidationError("Message must be at least 10 characters long.")
         return message
+    
+    class CompanyForm(forms.ModelForm):
+    # the inner Meta class tells django which model to use and which fields to include in the form
+      class Meta:
+        model = Company
+        fields = ['name', 'email', 'website']
+        # note in our model we also have created_at and updated_at fields, but we don't need to include them in the form since they are automatically set by django
