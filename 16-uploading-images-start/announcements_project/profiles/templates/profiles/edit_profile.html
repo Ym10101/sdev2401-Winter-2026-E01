@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 md:px-0">
+    <h1 class="text-3xl font-bold underline mb-6">Update Profile</h1>
+
+    <!-- Profile Photo Preview -->
+    <div class="mb-6 flex items-center gap-4">
+        {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}"
+                 alt="Profile Photo"
+                 class="w-24 h-24 rounded-full object-cover border">
+        {% else %}
+            <img src="{% static 'images/default-profile.png' %}"
+                 alt="Default Profile"
+                 class="w-24 h-24 rounded-full object-cover border">
+        {% endif %}
+        <p class="text-sm text-gray-500">Current Profile Photo</p>
+    </div>
+
+    <!-- IMPORTANT: enctype="multipart/form-data" is required for file uploads -->
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                {{ field.label }}
+            </label>
+
+            <div class="mt-1">
+                {{ field }}
+            </div>
+
+            {% if field.help_text %}
+                <p class="text-xs text-gray-500">{{ field.help_text }}</p>
+            {% endif %}
+
+            {% if field.errors %}
+                <p class="text-sm text-red-500 mt-1">{{ field.errors|striptags }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+        <div class="p-4 bg-red-100 text-red-800 border border-red-200 rounded">
+            <ul>
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <button type="submit"
+                class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+            Update Profile
+        </button>
+    </form>
+</div>
+{% endblock %}
