@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from django.urls import reverse_lazy
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # custom apps
-
+    'core',
+    'announcements',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +127,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = 'core.User'
+# the reverse_lazy method find the URL by the name in case the path changes in the future
+LOGIN_REDIRECT_URL = reverse_lazy('announcement_list')
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+# When a view is restricted to authorized users, where we send unauthorized visitors
+LOGIN_URL = '/accounts/login/'

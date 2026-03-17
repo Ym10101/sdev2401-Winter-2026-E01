@@ -147,3 +147,5 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Print emails to the terminal instead of actually sending them
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

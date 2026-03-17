@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 
 # Create your views here.
 from .models import Company, Employee
-from .forms import ContactForm
+from .forms import ContactForm, CompanyForm
 
 # Create the contact form here.
 def contact_us(request):
@@ -44,6 +44,9 @@ def contact_us(request):
                 "clients/contact_us.html",
                 {"form": form}
             )
+    else:
+        return render(request, "clients/contact_us.html", {"form": ContactForm()})
+        
 
 def list_companies(request):
     # fetching data from the database and passing it to the template
@@ -79,3 +82,68 @@ def employees_search_results(request, company_id):
     # return
     return render(request, 'clients/employees_search_results.html',
                   {'employees': employees, 'query': query, 'company': company})
+
+def create_company(request):
+    if request.method == "POST":
+        form = CompanyForm(request.POST)
+        if form.is_valid():
+            # this uses the clean data from the form to create a new company
+            # this will set the PK for the record
+            form.save()
+            # get the newly created company instance
+            # you need to use form.instance after save to make sure you have the PK
+            company = form.instance
+            #pass the new company to the template
+            return render(
+                request, 
+                "clients/company_crud.html", 
+                {"form": CompanyForm(), "new_company": company, 'create': True}
+                )
+        else:
+            #form has errors - send the form back with the errors
+            return render(
+                request,
+                "clients/company_crud.html",
+                {"form": form, 'create': True}
+            )
+    #default path if not a POST request - likely a GET request
+    form = CompanyForm()
+    return render(request, 'clients/company_crud.html', {'form': form, 'create': True})
+
+def update_company(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    if request.method == "GET":
+        form = CompanyForm(instance=company)
+        return render(
+            request,
+            "clients/company_crud.html",
+            {
+                "company": company,
+                "form": form
+            }
+        )
+    elif request.method == "POST":
+        form = CompanyForm(request.POST, instance=company)
+        if form.is_valid():
+            form.save()
+            updated_company = form.instance
+            return render(
+                request,
+                "clients/company_crud.html",
+                {
+                    'form': CompanyForm(instance=updated_company),
+                    'company': company,
+                    'updated': True
+                }
+            )
+        else:
+            return render(
+                request,
+                "clients/company_crud.html",
+                {'form': form}
+            )
+    return render(
+        request,
+        "clients/company_crud.html",
+        {"form": CompanyForm()}
+    )

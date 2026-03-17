@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Assignment Upload{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6 bg-white shadow rounded-lg">
+    <h1 class="text-2xl font-bold mb-6">Bulk Assignment Upload</h1>
+
+    {% if success %}
+    <div class="mb-6 p-4 bg-green-100 border border-green-300 rounded">
+        <p class="font-semibold text-green-800">The following assignments were uploaded successfully!</p>
+        <ul class="mt-2 list-disc list-inside text-green-900">
+            {% for assignment in assignments %}
+            <li>{{ assignment.title }} - Due: {{assignment.due_date}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="flex flex-col">
+            <label for="{{ field.id_for_label }}" class="mb-1 text-sm font-medium text-gray-700">
+                {{field.label}}
+            </label>
+            <div class="border border-gray-300 rounded px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+                {{field}}
+            </div>
+            {% if field.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ field.errors|striptags }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        {% if form.non_field_errors %}
+        <div class="p-3 bg-red-100 border border-red-300 rounded">
+            <ul class="list-disc list-inside text-red-700 text-sm">
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">
+            Upload Assignments
+        </button>
+    </form>
+</div>
+{% endblock %}
